@@ -213,22 +213,23 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_argument() or ""
         items = []
 
-        ports = get_open_ports(query)
-
-        if not ports:
-            if query:
-                items.append(ExtensionResultItem(
-                    icon="images/icon.svg",
-                    name=f"No process found on port {query}",
-                    on_enter=HideWindowAction()
-                ))
-            else:
-                items.append(ExtensionResultItem(
-                    icon="images/icon.svg",
-                    name="No ports are open/running",
-                    on_enter=HideWindowAction()
-                ))
+        # Get all ports first
+        all_ports = get_open_ports("")
+        
+        if not all_ports:
+            items.append(ExtensionResultItem(
+                icon="images/icon.svg",
+                name="No ports are open/running",
+                on_enter=HideWindowAction()
+            ))
             return RenderResultListAction(items)
+
+        # If query provided, filter ports
+        if query:
+            filtered_ports = [p for p in all_ports if query in p["port"]]
+            ports = filtered_ports if filtered_ports else all_ports
+        else:
+            ports = all_ports
 
         for p in ports[:15]:
             items.append(ExtensionResultItem(
