@@ -1,13 +1,16 @@
 # uLauncher OmniPack
 
-A powerful Ulauncher extension with multiple utilities to boost your productivity.
+A powerful [Ulauncher](https://ulauncher.io/) extension with multiple utilities to boost your productivity.
 
 ## Features
 
 ### UUID Generator
 Generate UUIDs of different versions instantly.
 
-**Keyword:** `uuid`
+**Keyword:** 
+```
+uuid
+```
 
 **Usage:**
 - `uuid` - Generate UUID v4
@@ -18,7 +21,10 @@ Generate UUIDs of different versions instantly.
 ### Password Generator
 Generate secure random passwords with customizable length.
 
-**Keyword:** `pass`
+**Keyword:** 
+```
+pass
+```
 
 **Usage:**
 - `pass` - Generate 3 random passwords (16 characters)
@@ -27,7 +33,10 @@ Generate secure random passwords with customizable length.
 ### Kill Process
 Search and kill running processes by name.
 
-**Keyword:** `kill`
+**Keyword:** 
+```
+kill
+```
 
 **Usage:**
 - `kill` - List all running processes
@@ -38,7 +47,10 @@ Select a process and press Enter to kill it.
 ### Kill Port
 Kill processes listening on specific ports.
 
-**Keyword:** `killport`
+**Keyword:** 
+```
+killport
+```
 
 **Usage:**
 - `killport` - List all open/listening ports
@@ -49,7 +61,10 @@ If no ports match the search, all ports are displayed. Select a port and press E
 ### Empty Trash
 Instantly empty your trash/recycle bin.
 
-**Keyword:** `emptytrash`
+**Keyword:** 
+```
+emptytrash
+```
 
 **Usage:**
 - `emptytrash` - Empty the trash immediately
@@ -57,7 +72,10 @@ Instantly empty your trash/recycle bin.
 ### Google Search
 Search directly on Google.
 
-**Keyword:** `g`
+**Keyword:** 
+```
+g
+```
 
 **Usage:**
 - `g python tutorial` - Search for "python tutorial" on Google
@@ -65,22 +83,25 @@ Search directly on Google.
 ### Google AI Search
 Search on Google with AI Mode enabled.
 
-**Keyword:** `gai`
+**Keyword:** 
+```
+gai
+```
 
 **Usage:**
 - `gai what is machine learning` - Search with Google AI Mode
 
 ## Installation
 
-1. Open Ulauncher preferences
-2. Go to Extensions tab
-3. Click "Add extension"
+1. Open **Ulauncher** settings
+2. Go to **EXTENSIONS** tab
+3. Click **+ Add extension**
 4. Paste: `https://github.com/forhadkhan/ulauncher-omnipack`
-5. Click Add
+5. Click **Add**
 
 ## Customization
 
-All keywords can be customized in Ulauncher preferences:
+All keywords can be customized in OmniPack configuration. Go to Ulauncher settings > EXTENSIONS > OmniPack:
 - UUID Generator keyword (default: `uuid`)
 - Password Generator keyword (default: `pass`)
 - Kill Process keyword (default: `kill`)
@@ -105,10 +126,16 @@ All keywords can be customized in Ulauncher preferences:
 **Empty Trash not working:**
 - Ensure `~/.local/share/Trash` directory exists
 
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
 ## License
 
-MIT License
+[MIT License](LICENSE)
 
 ## Author
 
-Forhad Khan
+[Forhad Khan](https://forhadkhan.com)
+
+> Repository: [https://github.com/forhadkhan/ulauncher-omnipack](https://github.com/forhadkhan/ulauncher-omnipack)
