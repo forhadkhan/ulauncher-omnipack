@@ -82,12 +82,12 @@ def get_open_ports(search: str = "") -> list:
                     # Filter by search
                     if search and search not in port:
                         continue
-                    ports.append({"pid": pid, "name": name, "port": int(port) if pid else port})
-        # Sort by port number, matching ports first
+                    ports.append({"pid": pid, "name": name, "port": port})
+        # Sort by port number
         if search:
             ports.sort(key=lambda x: (x["port"] != search, x["port"]))
         else:
-            ports.sort(key=lambda x: int(x["port"]) if isinstance(x["port"], int) else 0)
+            ports.sort(key=lambda x: x["port"])
     except Exception as e:
         logger.error(f"Error getting open ports: {e}")
     return ports
