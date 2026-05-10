@@ -15,27 +15,6 @@
 
 ---
 
-## Table of Contents
-
-- [Features](#features)
-  - [UUID Generator](#uuid-generator)
-  - [Password Generator](#password-generator)
-  - [Kill Process](#kill-process)
-  - [Kill Port](#kill-port)
-  - [Empty Trash](#empty-trash)
-  - [Google Search](#google-search)
-  - [Google AI Search](#google-ai-search)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Customization](#customization)
-- [Requirements](#requirements)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
-
----
-
 ## ✨ Features
 
 ### 🔑 UUID Generator
