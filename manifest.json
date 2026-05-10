@@ -31,6 +31,12 @@
       "type": "keyword",
       "name": "Kill Port",
       "default_value": "killport"
+    },
+    {
+      "id": "emptytrash_kw",
+      "type": "keyword",
+      "name": "Empty Trash",
+      "default_value": "emptytrash"
     }
   ]
 }

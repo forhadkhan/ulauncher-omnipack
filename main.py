@@ -6,6 +6,7 @@ import string
 import subprocess
 import os
 import signal
+import shutil
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent
@@ -101,9 +102,12 @@ class KeywordQueryEventListener(EventListener):
         pass_kw = extension.preferences.get("pass_kw", "pass")
         kill_kw = extension.preferences.get("kill_kw", "kill")
         killport_kw = extension.preferences.get("killport_kw", "killport")
+        emptytrash_kw = extension.preferences.get("emptytrash_kw", "emptytrash")
         keyword = event.get_keyword()
 
-        if keyword == kill_kw:
+        if keyword == emptytrash_kw:
+            return self.handle_emptytrash()
+        elif keyword == kill_kw:
             return self.handle_kill(event)
         elif keyword == killport_kw:
             return self.handle_killport(event)
@@ -229,6 +233,40 @@ class KeywordQueryEventListener(EventListener):
             ))
 
         return RenderResultListAction(items)
+
+    def handle_emptytrash(self):
+        """Empty the user trash directly without confirmation."""
+        trash_path = os.path.expanduser("~/.local/share/Trash")
+        emptied = False
+        for subdir in ["files", "info"]:
+            path = os.path.join(trash_path, subdir)
+            if os.path.exists(path):
+                for item in os.listdir(path):
+                    item_path = os.path.join(path, item)
+                    try:
+                        if os.path.isfile(item_path) or os.path.islink(item_path):
+                            os.unlink(item_path)
+                        elif os.path.isdir(item_path):
+                            shutil.rmtree(item_path)
+                        emptied = True
+                    except Exception as e:
+                        logger.error(f"Error removing {item_path}: {e}")
+
+        if emptied:
+            return RenderResultListAction([
+                ExtensionResultItem(
+                    icon="images/icon.svg",
+                    name="Trash emptied successfully",
+                    on_enter=HideWindowAction()
+                )
+            ])
+        return RenderResultListAction([
+            ExtensionResultItem(
+                icon="images/icon.svg",
+                name="Trash is already empty",
+                on_enter=HideWindowAction()
+            )
+        ])
 
 
 class ItemEnterEventListener(EventListener):
