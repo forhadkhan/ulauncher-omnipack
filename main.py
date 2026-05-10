@@ -64,11 +64,9 @@ def get_open_ports(search: str = "") -> list:
                 continue
             parts = line.split()
             if len(parts) >= 5:
-                # Extract port from Local Address (e.g., "0.0.0.0:8080")
                 local_addr = parts[3]
                 if ":" in local_addr:
                     port = local_addr.rsplit(":", 1)[-1]
-                    # Extract PID and process name
                     proc_info = parts[-1] if len(parts) >= 6 else ""
                     pid = 0
                     name = "unknown"
@@ -79,15 +77,10 @@ def get_open_ports(search: str = "") -> list:
                             name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
                         except (ValueError, IndexError):
                             pass
-                    # Filter by search
                     if search and search not in port:
                         continue
                     ports.append({"pid": pid, "name": name, "port": port})
-        # Sort by port number
-        if search:
-            ports.sort(key=lambda x: (x["port"] != search, x["port"]))
-        else:
-            ports.sort(key=lambda x: x["port"])
+        ports.sort(key=lambda x: x["port"])
     except Exception as e:
         logger.error(f"Error getting open ports: {e}")
     return ports
@@ -213,35 +206,9 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_argument() or ""
         items = []
 
-        try:
-            result = subprocess.run(
-                ["ss", "-tlnp"],
-                capture_output=True, text=True, timeout=2
-            )
-            all_ports = []
-            for line in result.stdout.strip().split("\n")[1:]:
-                if not line.strip():
-                    continue
-                parts = line.split()
-                if len(parts) >= 5:
-                    local_addr = parts[3]
-                    if ":" in local_addr:
-                        port = local_addr.rsplit(":", 1)[-1]
-                        proc_info = parts[-1] if len(parts) >= 6 else ""
-                        pid = 0
-                        name = "unknown"
-                        if "pid=" in proc_info:
-                            try:
-                                pid_str = proc_info.split("pid=")[1].split(",")[0]
-                                pid = int(pid_str)
-                                name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
-                            except (ValueError, IndexError):
-                                pass
-                        all_ports.append({"pid": pid, "name": name, "port": port})
-        except Exception as e:
-            logger.error(f"Error getting ports: {e}")
-            all_ports = []
-
+        # Get all ports first
+        all_ports = get_open_ports("")
+        
         if not all_ports:
             items.append(ExtensionResultItem(
                 icon="images/icon.svg",
@@ -252,7 +219,7 @@ class KeywordQueryEventListener(EventListener):
 
         # Filter if query provided
         if query:
-            filtered = [p for p in all_ports if query in p["port"]]
+            filtered = get_open_ports(query)
             ports = filtered if filtered else all_ports
         else:
             ports = all_ports
