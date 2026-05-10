@@ -25,6 +25,12 @@
       "type": "keyword",
       "name": "Kill Process",
       "default_value": "kill"
+    },
+    {
+      "id": "killport_kw",
+      "type": "keyword",
+      "name": "Kill Port",
+      "default_value": "killport"
     }
   ]
 }
