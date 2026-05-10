@@ -4,6 +4,8 @@ import uuid as uuid_lib
 import random
 import string
 import subprocess
+import os
+import signal
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent
@@ -27,7 +29,6 @@ def get_processes(search: str = "") -> list:
     """Get list of processes matching search using ps command."""
     processes = []
     try:
-        # Use ps for fast process listing
         result = subprocess.run(
             ["ps", "-eo", "pid,comm,args", "--no-headers"],
             capture_output=True, text=True, timeout=2
@@ -40,15 +41,38 @@ def get_processes(search: str = "") -> list:
                 pid = int(parts[0])
                 name = parts[1]
                 cmd = parts[2] if len(parts) > 2 else name
-                # Filter by search
                 if search and search.lower() not in name.lower() and search.lower() not in cmd.lower():
                     continue
                 processes.append({"pid": pid, "name": name, "cmd": cmd[:80]})
-        # Sort alphabetically by name
         processes.sort(key=lambda x: x["name"].lower())
     except Exception as e:
         logger.error(f"Error getting processes: {e}")
     return processes
+
+
+def get_port_process(port: int) -> dict | None:
+    """Get process listening on a specific port."""
+    try:
+        result = subprocess.run(
+            ["ss", "-tlnp", f"sport = :{port}"],
+            capture_output=True, text=True, timeout=2
+        )
+        for line in result.stdout.strip().split("\n")[1:]:
+            if not line.strip():
+                continue
+            # Parse ss output: State Recv-Q Send-Q Local Address:Port Peer Address:Port Process
+            parts = line.split()
+            if len(parts) >= 6:
+                # Extract PID from process column (e.g., "users:(("nginx",pid=1234,fd=6))")
+                proc_info = parts[-1]
+                if "pid=" in proc_info:
+                    pid_str = proc_info.split("pid=")[1].split(",")[0]
+                    pid = int(pid_str)
+                    name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
+                    return {"pid": pid, "name": name, "port": port}
+    except Exception as e:
+        logger.error(f"Error getting port process: {e}")
+    return None
 
 
 class KeywordQueryEventListener(EventListener):
@@ -59,10 +83,13 @@ class KeywordQueryEventListener(EventListener):
         uuid_kw = extension.preferences.get("uuid_kw", "uuid")
         pass_kw = extension.preferences.get("pass_kw", "pass")
         kill_kw = extension.preferences.get("kill_kw", "kill")
+        killport_kw = extension.preferences.get("killport_kw", "killport")
         keyword = event.get_keyword()
 
         if keyword == kill_kw:
             return self.handle_kill(event)
+        elif keyword == killport_kw:
+            return self.handle_killport(event)
         elif keyword == pass_kw:
             return self.handle_password(event)
         return self.handle_uuid(event)
@@ -154,6 +181,44 @@ class KeywordQueryEventListener(EventListener):
 
         return RenderResultListAction(items)
 
+    def handle_killport(self, event):
+        """Kill process listening on a port."""
+        query = event.get_argument() or ""
+        items = []
+
+        if not query:
+            items.append(ExtensionResultItem(
+                icon="images/icon.svg",
+                name="Enter a port number (e.g., killport 3000)",
+                on_enter=HideWindowAction()
+            ))
+            return RenderResultListAction(items)
+
+        try:
+            port = int(query.split()[0])
+            proc = get_port_process(port)
+            if proc:
+                items.append(ExtensionResultItem(
+                    icon="images/icon.svg",
+                    name=f"Kill {proc['name']} (PID: {proc['pid']}) on port {port}",
+                    description=f"Process listening on port {port}",
+                    on_enter=ExtensionCustomAction({"pid": proc['pid'], "name": proc['name'], "port": port, "action": "killport"})
+                ))
+            else:
+                items.append(ExtensionResultItem(
+                    icon="images/icon.svg",
+                    name=f"No process found on port {port}",
+                    on_enter=HideWindowAction()
+                ))
+        except ValueError:
+            items.append(ExtensionResultItem(
+                icon="images/icon.svg",
+                name=f"Invalid port number: {query}",
+                on_enter=HideWindowAction()
+            ))
+
+        return RenderResultListAction(items)
+
 
 class ItemEnterEventListener(EventListener):
     """Handle item enter events."""
@@ -163,14 +228,19 @@ class ItemEnterEventListener(EventListener):
         data = event.get_data()
         pid = data["pid"]
         name = data["name"]
-        import os
-        import signal
+        action_type = data.get("action", "kill")
+        port = data.get("port")
+
         try:
             os.kill(pid, signal.SIGTERM)
+            if action_type == "killport":
+                msg = f"Killed {name} (PID: {pid}) on port {port}"
+            else:
+                msg = f"Killed {name} (PID: {pid})"
             return RenderResultListAction([
                 ExtensionResultItem(
                     icon="images/icon.svg",
-                    name=f"Killed {name} (PID: {pid})",
+                    name=msg,
                     on_enter=HideWindowAction()
                 )
             ])
