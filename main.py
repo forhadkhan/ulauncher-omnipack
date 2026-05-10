@@ -50,29 +50,46 @@ def get_processes(search: str = "") -> list:
     return processes
 
 
-def get_port_process(port: int) -> dict | None:
-    """Get process listening on a specific port."""
+def get_open_ports(search: str = "") -> list:
+    """Get all processes listening on ports."""
+    ports = []
     try:
         result = subprocess.run(
-            ["ss", "-tlnp", f"sport = :{port}"],
+            ["ss", "-tlnp"],
             capture_output=True, text=True, timeout=2
         )
         for line in result.stdout.strip().split("\n")[1:]:
             if not line.strip():
                 continue
-            # Parse ss output: State Recv-Q Send-Q Local Address:Port Peer Address:Port Process
             parts = line.split()
-            if len(parts) >= 6:
-                # Extract PID from process column (e.g., "users:(("nginx",pid=1234,fd=6))")
-                proc_info = parts[-1]
-                if "pid=" in proc_info:
-                    pid_str = proc_info.split("pid=")[1].split(",")[0]
-                    pid = int(pid_str)
-                    name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
-                    return {"pid": pid, "name": name, "port": port}
+            if len(parts) >= 5:
+                # Extract port from Local Address (e.g., "0.0.0.0:8080")
+                local_addr = parts[3]
+                if ":" in local_addr:
+                    port = local_addr.rsplit(":", 1)[-1]
+                    # Extract PID and process name
+                    proc_info = parts[-1] if len(parts) >= 6 else ""
+                    pid = 0
+                    name = "unknown"
+                    if "pid=" in proc_info:
+                        try:
+                            pid_str = proc_info.split("pid=")[1].split(",")[0]
+                            pid = int(pid_str)
+                            name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
+                        except (ValueError, IndexError):
+                            pass
+                    # Filter by search
+                    if search and search not in port:
+                        continue
+                    ports.append({"pid": pid, "name": name, "port": int(port) if pid else port})
+        # Sort by port number, matching ports first
+        if search:
+            ports.sort(key=lambda x: (x["port"] != search, x["port"]))
+        else:
+            ports.sort(key=lambda x: int(x["port"]) if isinstance(x["port"], int) else 0)
     except Exception as e:
-        logger.error(f"Error getting port process: {e}")
-    return None
+        logger.error(f"Error getting open ports: {e}")
+    return ports
 
 
 class KeywordQueryEventListener(EventListener):
@@ -186,35 +203,29 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_argument() or ""
         items = []
 
-        if not query:
-            items.append(ExtensionResultItem(
-                icon="images/icon.svg",
-                name="Enter a port number (e.g., killport 3000)",
-                on_enter=HideWindowAction()
-            ))
-            return RenderResultListAction(items)
+        ports = get_open_ports(query)
 
-        try:
-            port = int(query.split()[0])
-            proc = get_port_process(port)
-            if proc:
+        if not ports:
+            if query:
                 items.append(ExtensionResultItem(
                     icon="images/icon.svg",
-                    name=f"Kill {proc['name']} (PID: {proc['pid']}) on port {port}",
-                    description=f"Process listening on port {port}",
-                    on_enter=ExtensionCustomAction({"pid": proc['pid'], "name": proc['name'], "port": port, "action": "killport"})
+                    name=f"No process found on port {query}",
+                    on_enter=HideWindowAction()
                 ))
             else:
                 items.append(ExtensionResultItem(
                     icon="images/icon.svg",
-                    name=f"No process found on port {port}",
+                    name="No ports are open/running",
                     on_enter=HideWindowAction()
                 ))
-        except ValueError:
+            return RenderResultListAction(items)
+
+        for p in ports[:15]:
             items.append(ExtensionResultItem(
                 icon="images/icon.svg",
-                name=f"Invalid port number: {query}",
-                on_enter=HideWindowAction()
+                name=f"Kill {p['name']} (PID: {p['pid']}) on port {p['port']}",
+                description=f"Process listening on port {p['port']}",
+                on_enter=ExtensionCustomAction({"pid": p['pid'], "name": p['name'], "port": p['port'], "action": "killport"})
             ))
 
         return RenderResultListAction(items)
