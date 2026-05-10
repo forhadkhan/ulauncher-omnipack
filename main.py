@@ -213,9 +213,35 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_argument() or ""
         items = []
 
-        # Get all ports first
-        all_ports = get_open_ports("")
-        
+        try:
+            result = subprocess.run(
+                ["ss", "-tlnp"],
+                capture_output=True, text=True, timeout=2
+            )
+            all_ports = []
+            for line in result.stdout.strip().split("\n")[1:]:
+                if not line.strip():
+                    continue
+                parts = line.split()
+                if len(parts) >= 5:
+                    local_addr = parts[3]
+                    if ":" in local_addr:
+                        port = local_addr.rsplit(":", 1)[-1]
+                        proc_info = parts[-1] if len(parts) >= 6 else ""
+                        pid = 0
+                        name = "unknown"
+                        if "pid=" in proc_info:
+                            try:
+                                pid_str = proc_info.split("pid=")[1].split(",")[0]
+                                pid = int(pid_str)
+                                name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
+                            except (ValueError, IndexError):
+                                pass
+                        all_ports.append({"pid": pid, "name": name, "port": port})
+        except Exception as e:
+            logger.error(f"Error getting ports: {e}")
+            all_ports = []
+
         if not all_ports:
             items.append(ExtensionResultItem(
                 icon="images/icon.svg",
@@ -224,10 +250,10 @@ class KeywordQueryEventListener(EventListener):
             ))
             return RenderResultListAction(items)
 
-        # If query provided, filter ports
+        # Filter if query provided
         if query:
-            filtered_ports = [p for p in all_ports if query in p["port"]]
-            ports = filtered_ports if filtered_ports else all_ports
+            filtered = [p for p in all_ports if query in p["port"]]
+            ports = filtered if filtered else all_ports
         else:
             ports = all_ports
 
