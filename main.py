@@ -103,11 +103,14 @@ class KeywordQueryEventListener(EventListener):
         kill_kw = extension.preferences.get("kill_kw", "kill")
         killport_kw = extension.preferences.get("killport_kw", "killport")
         emptytrash_kw = extension.preferences.get("emptytrash_kw", "emptytrash")
-        ai_kw = extension.preferences.get("ai_kw", "ai")
+        ai_kw = extension.preferences.get("ai_kw", "gai")
+        google_kw = extension.preferences.get("google_kw", "g")
         keyword = event.get_keyword()
 
         if keyword == ai_kw:
             return self.handle_ai_search(event)
+        elif keyword == google_kw:
+            return self.handle_google_search(event)
         elif keyword == emptytrash_kw:
             return self.handle_emptytrash()
         elif keyword == kill_kw:
@@ -274,6 +277,9 @@ class KeywordQueryEventListener(EventListener):
     def handle_ai_search(self, event):
         """Search in Google AI Mode."""
         query = event.get_argument() or ""
+        ai_kw = "gai"
+        if query.startswith(ai_kw + " "):
+            query = query[len(ai_kw) + 1:]
         if not query:
             return RenderResultListAction([
                 ExtensionResultItem(
@@ -289,6 +295,31 @@ class KeywordQueryEventListener(EventListener):
                 icon="images/icon.svg",
                 name=f"Search for '{query}'",
                 description="Open Google AI search results in your browser",
+                on_enter=OpenUrlAction(search_url)
+            )
+        ])
+
+    def handle_google_search(self, event):
+        """Search in Google."""
+        query = event.get_argument() or ""
+        google_kw = "g"
+        if query.startswith(google_kw + " "):
+            query = query[len(google_kw) + 1:]
+        if not query:
+            return RenderResultListAction([
+                ExtensionResultItem(
+                    icon="images/icon.svg",
+                    name="Google Search",
+                    description="Enter your search term...",
+                    on_enter=None
+                )
+            ])
+        search_url = f"https://www.google.com/search?q={query}"
+        return RenderResultListAction([
+            ExtensionResultItem(
+                icon="images/icon.svg",
+                name=f"Search for '{query}'",
+                description="Open Google search results in your browser",
                 on_enter=OpenUrlAction(search_url)
             )
         ])

@@ -42,7 +42,13 @@
       "id": "ai_kw",
       "type": "keyword",
       "name": "Google AI Search",
-      "default_value": "ai"
+      "default_value": "gai"
+    },
+    {
+      "id": "google_kw",
+      "type": "keyword",
+      "name": "Google Search",
+      "default_value": "g"
     }
   ]
 }
