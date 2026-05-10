@@ -14,7 +14,7 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
 from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
-from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.shared.action.OpenUrlAction import OpenUrlAction
 from ulauncher.api.shared.event import ItemEnterEvent
 
 logger = logging.getLogger(__name__)
@@ -103,9 +103,12 @@ class KeywordQueryEventListener(EventListener):
         kill_kw = extension.preferences.get("kill_kw", "kill")
         killport_kw = extension.preferences.get("killport_kw", "killport")
         emptytrash_kw = extension.preferences.get("emptytrash_kw", "emptytrash")
+        ai_kw = extension.preferences.get("ai_kw", "ai")
         keyword = event.get_keyword()
 
-        if keyword == emptytrash_kw:
+        if keyword == ai_kw:
+            return self.handle_ai_search(event)
+        elif keyword == emptytrash_kw:
             return self.handle_emptytrash()
         elif keyword == kill_kw:
             return self.handle_kill(event)
@@ -265,6 +268,28 @@ class KeywordQueryEventListener(EventListener):
                 icon="images/icon.svg",
                 name="Trash is already empty",
                 on_enter=HideWindowAction()
+            )
+        ])
+
+    def handle_ai_search(self, event):
+        """Search in Google AI Mode."""
+        query = event.get_argument() or ""
+        if not query:
+            return RenderResultListAction([
+                ExtensionResultItem(
+                    icon="images/icon.svg",
+                    name="Google AI Search",
+                    description="Enter your search term...",
+                    on_enter=None
+                )
+            ])
+        search_url = f"https://www.google.com/search?udm=50&q={query}"
+        return RenderResultListAction([
+            ExtensionResultItem(
+                icon="images/icon.svg",
+                name=f"Search for '{query}'",
+                description="Open Google AI search results in your browser",
+                on_enter=OpenUrlAction(search_url)
             )
         ])
 

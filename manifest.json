@@ -37,6 +37,12 @@
       "type": "keyword",
       "name": "Empty Trash",
       "default_value": "emptytrash"
+    },
+    {
+      "id": "ai_kw",
+      "type": "keyword",
+      "name": "Google AI Search",
+      "default_value": "ai"
     }
   ]
 }
