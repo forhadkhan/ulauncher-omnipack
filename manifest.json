@@ -1,0 +1,30 @@
+{
+  "required_api_version": "^2.0.0",
+  "name": "OmniPack",
+  "description": "Power extension for Ulauncher with multiple utilities",
+  "developer_name": "Forhad Khan",
+  "icon": "images/icon.svg",
+  "options": {
+    "query_debounce": 0.1
+  },
+  "preferences": [
+    {
+      "id": "uuid_kw",
+      "type": "keyword",
+      "name": "UUID Generator",
+      "default_value": "uuid"
+    },
+    {
+      "id": "pass_kw",
+      "type": "keyword",
+      "name": "Password Generator",
+      "default_value": "pass"
+    },
+    {
+      "id": "kill_kw",
+      "type": "keyword",
+      "name": "Kill Process",
+      "default_value": "kill"
+    }
+  ]
+}
