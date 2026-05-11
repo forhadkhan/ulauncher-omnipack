@@ -52,35 +52,36 @@ def get_processes(search: str = "") -> list:
 
 
 def get_open_ports(search: str = "") -> list:
-    """Get all processes listening on ports."""
+    """Get all processes listening on ports using lsof."""
     ports = []
     try:
         result = subprocess.run(
-            ["ss", "-tlnp"],
-            capture_output=True, text=True, timeout=2
+            ["lsof", "-i", "-P", "-n"],
+            capture_output=True, text=True, timeout=5
         )
+        seen = set()
         for line in result.stdout.strip().split("\n")[1:]:
-            if not line.strip():
+            if "LISTEN" not in line:
                 continue
             parts = line.split()
-            if len(parts) >= 5:
-                local_addr = parts[3]
-                if ":" in local_addr:
-                    port = local_addr.rsplit(":", 1)[-1]
-                    proc_info = parts[-1] if len(parts) >= 6 else ""
-                    pid = 0
-                    name = "unknown"
-                    if "pid=" in proc_info:
-                        try:
-                            pid_str = proc_info.split("pid=")[1].split(",")[0]
-                            pid = int(pid_str)
-                            name = proc_info.split('"')[1] if '"' in proc_info else "unknown"
-                        except (ValueError, IndexError):
-                            pass
-                    if search and search not in port:
-                        continue
-                    ports.append({"pid": pid, "name": name, "port": port})
-        ports.sort(key=lambda x: x["port"])
+            if len(parts) < 9:
+                continue
+            name = parts[0]
+            pid_str = parts[1]
+            addr = parts[8]  # e.g. 127.0.0.1:8080 or *:8080
+            port = addr.rsplit(":", 1)[-1]
+            try:
+                pid = int(pid_str)
+            except ValueError:
+                continue
+            key = (pid, port)
+            if key in seen:
+                continue
+            seen.add(key)
+            if search and search not in port:
+                continue
+            ports.append({"pid": pid, "name": name, "port": port})
+        ports.sort(key=lambda x: int(x["port"]) if x["port"].isdigit() else 0)
     except Exception as e:
         logger.error(f"Error getting open ports: {e}")
     return ports
@@ -203,32 +204,38 @@ class KeywordQueryEventListener(EventListener):
 
     def handle_killport(self, event):
         """Kill process listening on a port."""
-        query = event.get_argument() or ""
-        items = []
-
-        # Get all ports first
-        all_ports = get_open_ports("")
-        
-        if not all_ports:
-            items.append(ExtensionResultItem(
+        if not shutil.which("lsof"):
+            return RenderResultListAction([ExtensionResultItem(
                 icon="images/icon.svg",
-                name="No ports are open/running",
+                name="lsof not found",
+                description="Install lsof to use killport",
                 on_enter=HideWindowAction()
-            ))
-            return RenderResultListAction(items)
+            )])
 
-        # Filter if query provided
+        query = (event.get_argument() or "").strip()
+        all_ports = get_open_ports("")
+
+        if not all_ports:
+            return RenderResultListAction([ExtensionResultItem(
+                icon="images/icon.svg",
+                name="No ports are currently listening",
+                on_enter=HideWindowAction()
+            )])
+
         if query:
-            filtered = get_open_ports(query)
-            ports = filtered if filtered else all_ports
+            matched = [p for p in all_ports if query in p["port"]]
+            ports = matched if matched else all_ports
+            desc_prefix = f"Port {query} not found — showing all" if not matched else f"Matching port {query}"
         else:
             ports = all_ports
+            desc_prefix = "Active listening port"
 
+        items = []
         for p in ports[:15]:
             items.append(ExtensionResultItem(
                 icon="images/icon.svg",
-                name=f"Kill {p['name']} (PID: {p['pid']}) on port {p['port']}",
-                description=f"Process listening on port {p['port']}",
+                name=f":{p['port']}  {p['name']}  (PID {p['pid']})",
+                description=desc_prefix,
                 on_enter=ExtensionCustomAction({"pid": p['pid'], "name": p['name'], "port": p['port'], "action": "killport"})
             ))
 
