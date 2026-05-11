@@ -41,7 +41,8 @@ class KeywordQueryEventListener(EventListener):
             module_kw = module.get_keyword()
             pref_map = {
                 "port": "killport_kw",
-                "ai": "ai_kw",
+                "ai": "ai_aggregator_kw",
+                "gai": "ai_kw",
                 "g": "google_kw",
                 "trash": "emptytrash_kw",
                 "file": "file_search_kw",

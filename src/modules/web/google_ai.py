@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 from typing import List
 from src.modules.base_module import BaseModule
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
@@ -10,7 +11,7 @@ class GoogleAIModule(BaseModule):
     """Google search with AI results (udm=50)"""
 
     def get_keyword(self) -> str:
-        return "ai"
+        return "gai"
 
     def get_icon(self) -> str:
         return "images/icon.svg"
@@ -25,7 +26,8 @@ class GoogleAIModule(BaseModule):
                 on_enter=None
             )]
 
-        search_url = f"https://www.google.com/search?udm=50&q={query}"
+        encoded_query = urllib.parse.quote(query)
+        search_url = f"https://www.google.com/search?udm=50&q={encoded_query}"
         return [ExtensionResultItem(
             icon=self.get_icon(),
             name=f"AI Search for '{query}'",
