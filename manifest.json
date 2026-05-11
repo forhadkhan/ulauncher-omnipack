@@ -1,13 +1,34 @@
 {
   "required_api_version": "^2.0.0",
   "name": "OmniPack",
-  "description": "Power extension for Ulauncher with multiple utilities",
+  "description": "All-in-one productivity extension for uLauncher",
   "developer_name": "Forhad Khan",
   "icon": "images/icon.svg",
   "options": {
     "query_debounce": 0.1
   },
   "preferences": [
+    {
+      "id": "omni_kw",
+      "type": "keyword",
+      "name": "OmniPack",
+      "description": "Main trigger keyword",
+      "default_value": "omni"
+    },
+    {
+      "id": "enabled_modules",
+      "type": "select",
+      "name": "Active Module Groups",
+      "description": "Enable/disable feature categories",
+      "default_value": "all",
+      "options": [
+        {"value": "all", "text": "All"},
+        {"value": "dev", "text": "Developer Tools"},
+        {"value": "system", "text": "System Utilities"},
+        {"value": "web", "text": "Web Search"},
+        {"value": "utils", "text": "Utilities"}
+      ]
+    },
     {
       "id": "uuid_kw",
       "type": "keyword",
