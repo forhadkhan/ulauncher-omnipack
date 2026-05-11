@@ -23,15 +23,14 @@ Evaluate math expressions safely. Supports basic arithmetic, percentages, and co
 **Keywords:**
 - `omni calc <expr>`
 - `calc <expr>` (direct)
-- `= <expr>` (alias)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
 | `calc 2+2*5` | Evaluate expression (result: 12) |
-| `= 5% of 100` | Calculate percentage (result: 5) |
-| `= sqrt(16)` | Math function (result: 4) |
-| `omni calc 1/2` | Simple division (result: 0.5) |
+| `calc 5% of 100` | Calculate percentage (result: 5) |
+| `calc 100*5%` | Suffix percentage (result: 5) |
+| `omni calc sqrt(16)` | Math function (result: 4) |
 
 ---
 

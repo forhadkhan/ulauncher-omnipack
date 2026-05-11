@@ -50,7 +50,7 @@ Note: Once you add a new feature or change any file, copy the file or whole root
 | F11 | DuckDuckGo Search | `ddg` | ⏳ PENDING | Low | None | [mikebarkmin/ulauncher-duckduckgo](https://github.com/mikebarkmin/ulauncher-duckduckgo) | Privacy-focused search |
 | F12 | Bing Search | `bing` | ⏳ PENDING | Low | None | — | Microsoft search engine |
 | F13 | AI Aggregator | `ai` | ⏳ PENDING | Medium | None | [IgorVaryvoda/perplexity](https://github.com/IgorVaryvoda/ulauncher-perplexity) | Links to: Perplexity, Gemini, ChatGPT, Claude, Copilot |
-| F14 | Calculator | `calc`, `=` | ✅ COMPLETED | High | None | [tchar/albert-calculate-anything](https://github.com/tchar/ulauncher-albert-calculate-anything) | Support math expressions, currency, units |
+| F14 | Calculator | `calc`, `=` | ✅ COMPLETED | High | None | [tchar/albert-calculate-anything](https://github.com/tchar/ulauncher-albert-calculate-anything) | Support math expressions, currency, units. Strictly uses `calc` keyword. |
 | F15 | IP Lookup | `ip` | ⏳ PENDING | Medium | None | [manahter/IP-Analysis](https://github.com/manahter/ulauncher-IP-Analysis), [munim/ip-lookup](https://github.com/munim/ulauncher-ip-lookup) | Local + public IP, IPv4/6, geolocation |
 | F16 | Browser Profiles | `bbp`, `cbp` | ⏳ PENDING | Medium | OS-specific paths | [SinghRobinKumar/brave-profiles](https://github.com/SinghRobinKumar/ulauncher-brave-profiles), [FloydJohn/chrome-profiles](https://github.com/FloydJohn/ulauncher-chrome-profiles) | Detect installed browsers, list profiles |
 | F17 | Word Dictionary | `w`, `ws`, `wa` | ⏳ PENDING | Low | API: dictionaryapi.dev | — | Definition/synonym/antonym via API |

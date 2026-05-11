@@ -91,12 +91,6 @@
       "default_value": "calc"
     },
     {
-      "id": "calc_alias_kw",
-      "type": "keyword",
-      "name": "Calculator Alias",
-      "default_value": "="
-    },
-    {
       "id": "youtube_kw",
       "type": "keyword",
       "name": "YouTube Search",

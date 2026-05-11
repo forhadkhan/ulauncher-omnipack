@@ -1,5 +1,4 @@
 import logging
-import re
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
@@ -18,6 +17,8 @@ class KeywordQueryEventListener(EventListener):
         omni_kw = extension.preferences.get("omni_kw", "omni")
         
         # 1. Handle main 'omni' keyword
+        logger.debug(f"OmniPack: Received event with keyword='{keyword}' and query='{query}'")
+        
         if keyword == omni_kw:
             if not query:
                 return self.show_help(extension)
@@ -29,20 +30,13 @@ class KeywordQueryEventListener(EventListener):
             
             module = extension.get_module(module_kw)
             if module and module.is_enabled():
+                logger.debug(f"OmniPack: Routing to module '{module_kw}'")
                 return RenderResultListAction(module.handle_query(module_args))
             
-            # Smart Resolver: If it looks like math, show calculator result even without 'calc'
-            if self.is_likely_math(query):
-                calc_module = extension.get_module("calc")
-                if calc_module and calc_module.is_enabled():
-                    calc_results = calc_module.handle_query(query)
-                    if calc_results and "..." not in calc_results[0].get_name():
-                        return RenderResultListAction(calc_results)
-
             # If no specific module, show help or generic results
             return self.show_help(extension, f"Unknown module: {module_kw}" if query else None)
 
-        # 2. Handle direct keyword commands (e.g., 'uuid', 'pass', '=')
+        # 2. Handle direct keyword commands (e.g., 'uuid', 'pass')
         for module in extension.modules.values():
             module_kw = module.get_keyword()
             pref_map = {
@@ -52,14 +46,13 @@ class KeywordQueryEventListener(EventListener):
                 "trash": "emptytrash_kw",
                 "file": "file_search_kw",
                 "calc": "calc_kw",
-                "=": "calc_alias_kw",
                 "yt": "youtube_kw"
             }
             pref_id = pref_map.get(module_kw, f"{module_kw}_kw")
             pref_val = extension.preferences.get(pref_id)
             
-            # Handle exact match or alias match (especially for '=')
-            if pref_val == keyword or (pref_val == "=" and keyword == "="):
+            if pref_val == keyword:
+                logger.debug(f"OmniPack: Direct keyword match for '{keyword}' -> module '{module_kw}'")
                 if module.is_enabled():
                     return RenderResultListAction(module.handle_query(query))
                 else:
@@ -71,13 +64,6 @@ class KeywordQueryEventListener(EventListener):
                     )])
 
         return self.show_help(extension)
-
-    def is_likely_math(self, query: str) -> bool:
-        """Check if query looks like a math expression."""
-        if not query:
-            return False
-        # Starts with number or contains math operators
-        return bool(re.match(r'^[0-9\(]', query)) and any(c in "+-*/^%" for c in query)
 
     def show_help(self, extension, error_msg=None):
         """List all available commands and their descriptions."""
