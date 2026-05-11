@@ -35,7 +35,7 @@ Evaluate math expressions safely. Supports basic arithmetic, percentages, and co
 ---
 
 ### 🌐 IP Lookup
-Fetch and display your local and public IP addresses, including geolocation and ISP information.
+Fetch and display your local and public IP addresses, or resolve domains and fetch details for specific IPs.
 
 **Keywords:**
 - `omni ip`
@@ -44,8 +44,9 @@ Fetch and display your local and public IP addresses, including geolocation and 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `ip` | Show local and public IP details |
-| `omni ip` | List IP info and location |
+| `ip` or `ip ?` | Show your local and public IP details |
+| `ip 8.8.8.8` | Get details for a specific IP |
+| `ip google.com` | Resolve domain to IP and get details |
 
 ### 🔍 File Search
 Search files recursively using glob/grep patterns.
