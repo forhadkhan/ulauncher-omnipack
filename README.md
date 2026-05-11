@@ -20,36 +20,31 @@
 ### 🔑 UUID Generator
 Generate UUIDs of different versions instantly.
 
-**Keyword:**
-```
-uuid
-```
+**Keywords:**
+- `omni uuid`
+- `uuid` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `uuid` | Generate UUID v4 |
+| `omni uuid` | List all UUID options |
+| `uuid` | Generate UUID v4 (quick) |
 | `uuid v1` | Generate UUID v1 |
-| `uuid v4` | Generate UUID v4 |
 | `uuid v5 <domain>` | Generate UUID v5 (default: example.com) |
 
 **Example Output:** `550e8400-e29b-41d4-a716-446655440000`
 
 ---
 
-### 🔐 Password Generator
-Generate secure random passwords with customizable length.
-
-**Keyword:**
-```
-pass
-```
+**Keywords:**
+- `omni pass`
+- `pass` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `pass` | Generate 3 random passwords (16 characters) |
-| `pass 32` | Generate 3 passwords with 32 characters |
+| `omni pass` | Generate 5 random passwords (16 chars) |
+| `pass 32` | Generate passwords with 32 chars |
 
 **Options:**
 - Minimum length: 8 characters
@@ -58,86 +53,71 @@ pass
 
 ---
 
-### ⚡ Kill Process
-Search and kill running processes by name.
-
-**Keyword:**
-```
-kill
-```
+**Keywords:**
+- `omni kill`
+- `kill` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `kill` | List all running processes |
-| `kill firefox` | Search and list processes matching "firefox" |
+| `omni kill` | List all running processes |
+| `kill firefox` | Search processes matching "firefox" |
 
 **How to use:** Select a process and press `Enter` to kill it.
 
 ---
 
-### 🚪 Kill Port
-Kill processes listening on specific ports.
-
-**Keyword:**
-```
-killport
-```
+**Keywords:**
+- `omni port`
+- `killport` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `killport` | List all open/listening ports |
-| `killport 8080` | Filter and show ports matching "8080" |
+| `omni port` | List all open/listening ports |
+| `killport 8080` | Filter ports matching "8080" |
 
 **How to use:** If no ports match the search, all ports are displayed. Select a port and press `Enter` to kill the process.
-
+**Behavior:** 
+* `killport`: Lists all active listening ports.
+* `killport [port]`: Displays specific matching port info.
+* Missing Port: Shows all active ports if the target is inactive.
+* Empty State: Displays an error if no ports are open.
 ---
 
-### 🗑️ Empty Trash
-Instantly empty your trash/recycle bin.
-
-**Keyword:**
-```
-emptytrash
-```
+**Keywords:**
+- `omni trash`
+- `emptytrash` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `emptytrash` | Empty the trash immediately |
+| `omni trash` | Empty trash with confirmation |
+| `emptytrash` | Instant access to trash cleanup |
 
 ⚠️ **Warning:** This action cannot be undone!
 
 ---
 
-### 🔍 Google Search
-Search directly on Google.
-
-**Keyword:**
-```
-g
-```
+**Keywords:**
+- `omni g`
+- `g` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `g python tutorial` | Search for "python tutorial" on Google |
+| `omni g query` | Search Google for "query" |
 
 ---
 
-### 🤖 Google AI Search
-Search on Google with AI Mode enabled.
-
-**Keyword:**
-```
-gai
-```
+**Keywords:**
+- `omni ai`
+- `gai` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `gai what is machine learning` | Search with Google AI Mode |
+| `omni ai query` | Search with Google AI Mode |
 
 ---
 
@@ -161,17 +141,30 @@ git clone https://github.com/forhadkhan/ulauncher-omnipack.git
 
 ---
 
-## 🚀 Quick Start
+### 🚀 Quick Start
 
-After installation, simply type one of the keywords in Ulauncher:
+OmniPack gives you two ways to interact with your tools:
 
+#### 1. The Unified Command (`omni`)
+Type `omni` followed by a space to see a list of all available modules. You can then type the module name and your query.
 ```
-uuid          → Generate a UUID
-pass 20       → Generate a 20-character password
-kill chrome   → Find and kill Chrome processes
-killport 3000 → Kill process on port 3000
-g your query  → Search Google
+omni uuid          → Generate a UUID
+omni pass 20       → Generate a 20-character password
+omni kill chrome   → Find and kill Chrome processes
+omni port 3000     → Kill process on port 3000
+omni g your query  → Search Google
 ```
+
+#### 2. Direct Keywords
+If you prefer speed, you can use the module's keyword directly without the `omni` prefix.
+```
+uuid          → Quick UUID
+pass 16       → Quick password
+kill firefox  → Search and kill
+g search term → Search Google
+```
+
+> 💡 **Tip:** All keywords (including `omni`) are customizable in the extension settings.
 
 ---
 
@@ -196,10 +189,10 @@ All keywords can be customized in OmniPack configuration.
 ## 📋 Requirements
 
 - **Ulauncher:** 5.0 or higher
-- **Python:** 3.6 or higher
+- **Python:** 3.12 or higher (recommended)
 - **System Commands:**
-  - `ss` command (for killport feature)
-  - `ps` command (for kill feature)
+  - `lsof` command (for kill port feature)
+  - `ps` command (for kill process feature)
 - **Operating System:** Linux (tested on Ubuntu, Fedora, Arch)
 
 ---
