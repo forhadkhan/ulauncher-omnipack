@@ -33,12 +33,25 @@ class IpLookupModule(BaseModule):
     def _fetch_ip_details(self, ip: str = "") -> dict:
         """Fetch IP details from ipapi.co. If ip is empty, fetches public IP details."""
         url_path = f"https://ipapi.co/{ip + '/' if ip else ''}json/"
+        # Added User-Agent to avoid being blocked by API
+        headers = {'User-Agent': 'uLauncher-OmniPack/1.0'}
         try:
-            with urllib.request.urlopen(url_path, timeout=3) as url:
+            req = urllib.request.Request(url_path, headers=headers)
+            with urllib.request.urlopen(req, timeout=5) as url:
                 return json.loads(url.read().decode())
         except Exception as e:
-            logger.debug(f"Failed to fetch IP details for '{ip}': {e}")
+            logger.error(f"Failed to fetch IP details for '{ip}': {e}")
             return {}
+
+    def _get_public_ip_fallback(self) -> Optional[str]:
+        """Simple fallback to get just the public IP if detailed lookup fails."""
+        try:
+            headers = {'User-Agent': 'uLauncher-OmniPack/1.0'}
+            req = urllib.request.Request("https://icanhazip.com", headers=headers)
+            with urllib.request.urlopen(req, timeout=3) as url:
+                return url.read().decode().strip()
+        except Exception:
+            return None
 
     def _is_valid_ip(self, ip: str) -> bool:
         try:
@@ -66,6 +79,7 @@ class IpLookupModule(BaseModule):
 
         # Case 1: My IP (Empty query or '?')
         if not query or query == "?":
+            # 1. Local IP
             local_ip = self._get_local_ip()
             items.append(ExtensionResultItem(
                 icon=self.get_icon(),
@@ -74,9 +88,10 @@ class IpLookupModule(BaseModule):
                 on_enter=CopyToClipboardAction(local_ip)
             ))
 
+            # 2. Public IP Details
             details = self._fetch_ip_details()
-            if details:
-                public_ip = details.get("ip", "Unknown")
+            if details and "ip" in details:
+                public_ip = details.get("ip")
                 location = f"{details.get('city', '')}, {details.get('region', '')}, {details.get('country_name', '')}".strip(", ")
                 org = details.get("org", "Unknown")
                 items.append(ExtensionResultItem(
@@ -85,12 +100,29 @@ class IpLookupModule(BaseModule):
                     description=f"Location: {location} | ISP: {org}",
                     on_enter=CopyToClipboardAction(public_ip)
                 ))
+            else:
+                # Fallback to simple public IP
+                public_ip = self._get_public_ip_fallback()
+                if public_ip:
+                    items.append(ExtensionResultItem(
+                        icon=self.get_icon(),
+                        name=f"Public IP: {public_ip}",
+                        description="Fetched via fallback service. Press Enter to copy.",
+                        on_enter=CopyToClipboardAction(public_ip)
+                    ))
+                else:
+                    items.append(ExtensionResultItem(
+                        icon=self.get_icon(),
+                        name="Public IP: Error",
+                        description="Could not fetch public IP information.",
+                        on_enter=None
+                    ))
             return items
 
         # Case 2: Query is an IP Address
         if self._is_valid_ip(query):
             details = self._fetch_ip_details(query)
-            if details:
+            if details and "ip" in details:
                 ip = details.get("ip", query)
                 location = f"{details.get('city', '')}, {details.get('region', '')}, {details.get('country_name', '')}".strip(", ")
                 org = details.get("org", "Unknown")
@@ -113,7 +145,7 @@ class IpLookupModule(BaseModule):
         target_ip = self._resolve_domain(query)
         if target_ip:
             details = self._fetch_ip_details(target_ip)
-            if details:
+            if details and "ip" in details:
                 location = f"{details.get('city', '')}, {details.get('region', '')}, {details.get('country_name', '')}".strip(", ")
                 org = details.get("org", "Unknown")
                 items.append(ExtensionResultItem(
