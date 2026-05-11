@@ -47,7 +47,8 @@ class KeywordQueryEventListener(EventListener):
                 "trash": "emptytrash_kw",
                 "file": "file_search_kw",
                 "calc": "calc_kw",
-                "=": "calc_alias_kw"
+                "=": "calc_alias_kw",
+                "yt": "youtube_kw"
             }
             pref_id = pref_map.get(module_kw, f"{module_kw}_kw")
             
