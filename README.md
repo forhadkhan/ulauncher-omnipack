@@ -174,14 +174,32 @@ Generate UUIDs of different versions instantly.
 
 ---
 
+### 🤖 AI Aggregator
+Quick links to various AI services with your query.
+
 **Keywords:**
-- `omni ai`
-- `gai` (direct)
+- `omni ai <query>`
+- `ai <query>` (direct)
+
+**Services:**
+- Perplexity (supports query)
+- Google AI Mode (supports query)
+- ChatGPT (supports query)
+- Claude (supports query)
+
+---
+
+### 🌐 Google AI Mode
+Search Google with AI-focused results (udm=50).
+
+**Keywords:**
+- `omni gai <query>`
+- `gai <query>` (direct)
 
 **Usage:**
 | Command | Description |
 |---------|-------------|
-| `omni ai query` | Search with Google AI Mode |
+| `omni gai query` | Search with Google AI Mode |
 
 ---
 
@@ -246,7 +264,8 @@ All keywords can be customized in OmniPack configuration.
 | Kill Port | `killport` | 🗹 |
 | Empty Trash | `emptytrash` | 🗹 |
 | Google Search | `g` | 🗹 |
-| Google AI Search | `gai` | 🗹 |
+| AI Aggregator | `ai` | 🗹 |
+| Google AI Mode | `gai` | 🗹 |
 
 ---
 
