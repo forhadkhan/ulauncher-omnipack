@@ -95,6 +95,12 @@
       "type": "keyword",
       "name": "YouTube Search",
       "default_value": "yt"
+    },
+    {
+      "id": "ip_kw",
+      "type": "keyword",
+      "name": "IP Lookup",
+      "default_value": "ip"
     }
   ]
 }

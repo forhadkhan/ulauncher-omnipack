@@ -16,6 +16,7 @@ from src.modules.web.google_ai import GoogleAIModule
 from src.modules.utils.file_search import FileSearchModule
 from src.modules.utils.calculator import CalculatorModule
 from src.modules.web.youtube import YouTubeModule
+from src.modules.utils.ip_lookup import IpLookupModule
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
