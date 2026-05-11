@@ -186,6 +186,7 @@ Quick links to various AI services with your query.
 - Google AI Mode (supports query)
 - ChatGPT (supports query)
 - Claude (supports query)
+- Mistral (supports query)
 
 ---
 

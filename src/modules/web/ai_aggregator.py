@@ -48,6 +48,12 @@ class AIAggregatorModule(BaseModule):
                 "description": "Chat with Anthropic Claude",
                 "url": f"https://claude.ai/new?q={encoded_query}" if query else "https://claude.ai/new",
                 "icon": "images/icon.svg"
+            },
+            {
+                "name": "Mistral",
+                "description": "Chat with Mistral AI (Le Chat)",
+                "url": f"https://chat.mistral.ai/chat/?q={encoded_query}" if query else "https://chat.mistral.ai/",
+                "icon": "images/icon.svg"
             }
         ]
 
