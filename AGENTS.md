@@ -40,7 +40,7 @@ Note: Once you add a new feature or change any file, copy the file or whole root
 | F1 | UUID Generator | `uuid` | ✅ COMPLETED | Low | None | [fsevenm/ulauncher-uuid](https://github.com/fsevenm/ulauncher-uuid) | Supports UUID1/4/5 |
 | F2 | File Search (grep/glob) | `f`, `file` | ✅ COMPLETED | High | None | [mariob88/grep-search](https://github.com/mariob88/ulauncher-grep-search), [brpaz/file-search](https://github.com/brpaz/ulauncher-file-search), [fisadev/better-file-browser](https://github.com/fisadev/ulauncher-better-file-browser) | Support recursive search, file previews |
 | F3 | Empty Trash | `trash` | ✅ COMPLETED | Low | None | [EstebanForge/empty-trash](https://github.com/EstebanForge/ulauncher-empty-trash) | Added confirmation dialog |
-| F4 | YouTube Search | `yt` | ⏳ PENDING | Medium | None | [NastuzziSamy/youtube-search](https://github.com/NastuzziSamy/ulauncher-youtube-search) | Use YouTube Data API v3 |
+| F4 | YouTube Search | `yt` | ✅ COMPLETED | Medium | None | [NastuzziSamy/youtube-search](https://github.com/NastuzziSamy/ulauncher-youtube-search) | Use YouTube Data API v3 |
 | F5 | Password Generator | `pass` | ✅ COMPLETED | Low | None | — | Configurable length/charset |
 | F6 | Kill Process | `kill`, `ps` | ✅ COMPLETED | High | None | [isacikgoz/ukill](https://github.com/isacikgoz/ukill), [Eckhoff42/Kill-process](https://github.com/Eckhoff42/Ulauncher-Kill-process-on-click) | Modularized + search support |
 | F7 | Kill Port | `port` | ✅ COMPLETED | High | F6 | [cosmincraciun97/port-killer](https://github.com/cosmincraciun97/port-killer-ulauncher), [Adii-5442/portKiller](https://github.com/Adii-5442/ulauncher-portKiller) | Modularized + lsof check |

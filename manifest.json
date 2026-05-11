@@ -95,6 +95,12 @@
       "type": "keyword",
       "name": "Calculator Alias",
       "default_value": "="
+    },
+    {
+      "id": "youtube_kw",
+      "type": "keyword",
+      "name": "YouTube Search",
+      "default_value": "yt"
     }
   ]
 }

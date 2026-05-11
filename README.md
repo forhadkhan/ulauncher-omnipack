@@ -53,6 +53,21 @@ Search files recursively using glob/grep patterns.
 
 ---
 
+### 📺 YouTube Search
+Search for videos on YouTube instantly.
+
+**Keywords:**
+- `omni yt <query>`
+- `yt <query>` (direct)
+
+**Usage:**
+| Command | Description |
+|---------|-------------|
+| `yt lofi hip hop` | Search for music videos |
+| `omni yt coding tutorial` | Search for educational content |
+
+---
+
 ### 🔑 UUID Generator
 Generate UUIDs of different versions instantly.
 

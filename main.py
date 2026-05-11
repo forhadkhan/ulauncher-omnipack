@@ -15,6 +15,7 @@ from src.modules.web.google_search import GoogleSearchModule
 from src.modules.web.google_ai import GoogleAIModule
 from src.modules.utils.file_search import FileSearchModule
 from src.modules.utils.calculator import CalculatorModule
+from src.modules.web.youtube import YouTubeModule
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -32,5 +33,6 @@ if __name__ == "__main__":
     extension.register_module(GoogleAIModule)
     extension.register_module(FileSearchModule)
     extension.register_module(CalculatorModule)
+    extension.register_module(YouTubeModule)
     
     extension.run()
