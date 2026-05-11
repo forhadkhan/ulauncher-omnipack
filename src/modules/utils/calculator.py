@@ -24,7 +24,7 @@ class CalculatorModule(BaseModule):
             return [ExtensionResultItem(
                 icon=self.get_icon(),
                 name="Calculator",
-                description="Enter math expression (e.g. 2 + 2, 5% of 100, sqrt(16))",
+                description="Enter math expression (e.g. 2+2, 5% of 100, 100*5%)",
                 on_enter=None
             )]
 
@@ -32,27 +32,36 @@ class CalculatorModule(BaseModule):
         processed_query = query.lower()
         processed_query = processed_query.replace("x", "*")
         processed_query = processed_query.replace("^", "**")
+        
+        # Handle "percent of" / "% of"
         processed_query = processed_query.replace("% of", "* 0.01 *")
         processed_query = processed_query.replace("percent of", "* 0.01 *")
+        
+        # Handle "%" suffix (e.g., 5% -> 5*0.01)
+        # We use a regex to ensure we don't break things like "% of" already replaced
+        processed_query = re.sub(r"(\d+)%", r"(\1 * 0.01)", processed_query)
 
         try:
             # Basic safety check: only allow numbers, operators, and math functions
-            # This is a simple whitelist approach
+            # Whitelist approach for characters
             allowed_chars = set("0123456789+-*/().**% ")
-            if not all(c in allowed_chars for c in processed_query):
-                # Check for math functions
-                math_funcs = ["sqrt", "sin", "cos", "tan", "log", "exp", "pi", "e"]
-                temp_query = processed_query
-                for func in math_funcs:
-                    temp_query = temp_query.replace(func, "")
-                
-                if not all(c in allowed_chars for c in temp_query):
-                    return [ExtensionResultItem(
-                        icon=self.get_icon(),
-                        name="Invalid expression",
-                        description="Only basic math and common functions are supported.",
-                        on_enter=None
-                    )]
+            
+            # Check for math functions and constants
+            math_funcs = ["sqrt", "sin", "cos", "tan", "log", "exp", "pi", "e", "abs", "round", "pow"]
+            
+            # Remove allowed words to check for malicious input
+            test_query = processed_query
+            for func in math_funcs:
+                test_query = test_query.replace(func, "")
+            
+            if not all(c in allowed_chars for c in test_query):
+                logger.debug(f"Calculator: Blocked potentially unsafe query: {processed_query}")
+                return [ExtensionResultItem(
+                    icon=self.get_icon(),
+                    name="Invalid expression",
+                    description="Only basic math and common functions are supported.",
+                    on_enter=None
+                )]
 
             # Context for evaluation
             safe_dict = {
@@ -64,21 +73,34 @@ class CalculatorModule(BaseModule):
                 "exp": math.exp,
                 "pi": math.pi,
                 "e": math.e,
+                "abs": abs,
+                "round": round,
+                "pow": pow,
                 "__builtins__": None
             }
 
+            # Evaluate the expression
             result = eval(processed_query, {"__builtins__": None}, safe_dict)
             
-            # Format result
-            if isinstance(result, float) and result.is_integer():
-                result = int(result)
-            
-            result_str = str(result)
+            # Handle list/tuple results from some functions if any
+            if isinstance(result, (list, tuple)):
+                result_str = str(result)
+            elif isinstance(result, (int, float)):
+                # Format result
+                if isinstance(result, float) and result.is_integer():
+                    result = int(result)
+                
+                if isinstance(result, float):
+                    result_str = f"{result:.4f}".rstrip('0').rstrip('.')
+                else:
+                    result_str = str(result)
+            else:
+                result_str = str(result)
 
             return [ExtensionResultItem(
                 icon=self.get_icon(),
                 name=result_str,
-                description="Result of calculation. Press Enter to copy.",
+                description=f"Result of '{query}'. Press Enter to copy.",
                 on_enter=CopyToClipboardAction(result_str)
             )]
 
@@ -91,9 +113,13 @@ class CalculatorModule(BaseModule):
             )]
         except Exception as e:
             logger.debug(f"Calculation failed: {e}")
-            return [ExtensionResultItem(
-                icon=self.get_icon(),
-                name="Result: ...",
-                description="Continue typing your expression...",
-                on_enter=None
-            )]
+            # If it doesn't look like a complete math expression yet, show a placeholder
+            # But only if it has some numbers/operators
+            if any(c.isdigit() for c in query):
+                return [ExtensionResultItem(
+                    icon=self.get_icon(),
+                    name="...",
+                    description="Continue typing your expression...",
+                    on_enter=None
+                )]
+            return []

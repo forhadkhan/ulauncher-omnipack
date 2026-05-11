@@ -1,4 +1,5 @@
 import logging
+import re
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
@@ -18,28 +19,32 @@ class KeywordQueryEventListener(EventListener):
         
         # 1. Handle main 'omni' keyword
         if keyword == omni_kw:
-            parts = query.split(None, 1)
-            
-            # If no argument, show all available commands
-            if not parts:
+            if not query:
                 return self.show_help(extension)
             
-            # Route to specific module if it exists
+            # Check if it's a specific module command (e.g., 'omni uuid')
+            parts = query.split(None, 1)
             module_kw = parts[0]
             module_args = parts[1] if len(parts) > 1 else ""
             
             module = extension.get_module(module_kw)
             if module and module.is_enabled():
                 return RenderResultListAction(module.handle_query(module_args))
-            else:
-                # If module not found, show help with an error message
-                return self.show_help(extension, f"Unknown or disabled module: {module_kw}")
+            
+            # Smart Resolver: If it looks like math, show calculator result even without 'calc'
+            if self.is_likely_math(query):
+                calc_module = extension.get_module("calc")
+                if calc_module and calc_module.is_enabled():
+                    calc_results = calc_module.handle_query(query)
+                    if calc_results and "..." not in calc_results[0].get_name():
+                        return RenderResultListAction(calc_results)
 
-        # 2. Handle direct keyword commands (e.g., 'uuid', 'pass')
+            # If no specific module, show help or generic results
+            return self.show_help(extension, f"Unknown module: {module_kw}" if query else None)
+
+        # 2. Handle direct keyword commands (e.g., 'uuid', 'pass', '=')
         for module in extension.modules.values():
             module_kw = module.get_keyword()
-            # Mapping preference IDs: uuid -> uuid_kw, pass -> pass_kw, etc.
-            # Special cases: port -> killport_kw, ai -> ai_kw, g -> google_kw, trash -> emptytrash_kw
             pref_map = {
                 "port": "killport_kw",
                 "ai": "ai_kw",
@@ -51,8 +56,10 @@ class KeywordQueryEventListener(EventListener):
                 "yt": "youtube_kw"
             }
             pref_id = pref_map.get(module_kw, f"{module_kw}_kw")
+            pref_val = extension.preferences.get(pref_id)
             
-            if extension.preferences.get(pref_id) == keyword:
+            # Handle exact match or alias match (especially for '=')
+            if pref_val == keyword or (pref_val == "=" and keyword == "="):
                 if module.is_enabled():
                     return RenderResultListAction(module.handle_query(query))
                 else:
@@ -64,6 +71,13 @@ class KeywordQueryEventListener(EventListener):
                     )])
 
         return self.show_help(extension)
+
+    def is_likely_math(self, query: str) -> bool:
+        """Check if query looks like a math expression."""
+        if not query:
+            return False
+        # Starts with number or contains math operators
+        return bool(re.match(r'^[0-9\(]', query)) and any(c in "+-*/^%" for c in query)
 
     def show_help(self, extension, error_msg=None):
         """List all available commands and their descriptions."""
