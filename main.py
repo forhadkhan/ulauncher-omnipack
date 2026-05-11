@@ -13,6 +13,7 @@ from src.modules.system.kill_port import KillPortModule
 from src.modules.system.empty_trash import EmptyTrashModule
 from src.modules.web.google_search import GoogleSearchModule
 from src.modules.web.google_ai import GoogleAIModule
+from src.modules.web.ai_aggregator import AIAggregatorModule
 from src.modules.utils.file_search import FileSearchModule
 from src.modules.utils.calculator import CalculatorModule
 from src.modules.web.youtube import YouTubeModule
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     extension.register_module(EmptyTrashModule)
     extension.register_module(GoogleSearchModule)
     extension.register_module(GoogleAIModule)
+    extension.register_module(AIAggregatorModule)
     extension.register_module(FileSearchModule)
     extension.register_module(CalculatorModule)
     extension.register_module(YouTubeModule)

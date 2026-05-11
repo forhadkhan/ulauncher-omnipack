@@ -60,9 +60,17 @@
       "default_value": "emptytrash"
     },
     {
+      "id": "ai_aggregator_kw",
+      "type": "keyword",
+      "name": "AI Aggregator",
+      "description": "Links to Perplexity, Gemini, ChatGPT, etc.",
+      "default_value": "ai"
+    },
+    {
       "id": "ai_kw",
       "type": "keyword",
-      "name": "Google AI Search",
+      "name": "Google AI Mode",
+      "description": "Google Search with AI results (udm=50)",
       "default_value": "gai"
     },
     {
