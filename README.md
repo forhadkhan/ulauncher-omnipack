@@ -17,6 +17,42 @@
 
 ## ✨ Features
 
+### 🧮 Calculator
+Evaluate math expressions safely. Supports basic arithmetic, percentages, and common math functions (`sqrt`, `sin`, `cos`, etc.).
+
+**Keywords:**
+- `omni calc <expr>`
+- `calc <expr>` (direct)
+- `= <expr>` (alias)
+
+**Usage:**
+| Command | Description |
+|---------|-------------|
+| `calc 2+2*5` | Evaluate expression (result: 12) |
+| `= 5% of 100` | Calculate percentage (result: 5) |
+| `= sqrt(16)` | Math function (result: 4) |
+| `omni calc 1/2` | Simple division (result: 0.5) |
+
+---
+
+### 🔍 File Search
+Search files recursively using glob/grep patterns.
+
+**Keywords:**
+- `omni file <pattern>`
+- `f <pattern>` (direct)
+- `f /some/path <pattern>` (direct with custom path)
+
+**Usage:**
+| Command | Description |
+|---------|-------------|
+| `f config` | Search files with "config" in name |
+| `f *.py` | Search python files (glob) |
+| `f ~/Downloads *.zip` | Search zip files in Downloads |
+| `omni file test` | Search files with "test" in name |
+
+---
+
 ### 🔑 UUID Generator
 Generate UUIDs of different versions instantly.
 

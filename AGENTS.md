@@ -38,7 +38,7 @@ Note: Once you add a new feature or change any file, copy the file or whole root
 | ID | Feature | Keyword | Status | Priority | Dependencies | Reference Repo(s) | Notes |
 |----|---------|---------|--------|----------|-------------|-------------------|-------|
 | F1 | UUID Generator | `uuid` | ✅ COMPLETED | Low | None | [fsevenm/ulauncher-uuid](https://github.com/fsevenm/ulauncher-uuid) | Supports UUID1/4/5 |
-| F2 | File Search (grep/glob) | `f`, `file` | ⏳ PENDING | High | None | [mariob88/grep-search](https://github.com/mariob88/ulauncher-grep-search), [brpaz/file-search](https://github.com/brpaz/ulauncher-file-search), [fisadev/better-file-browser](https://github.com/fisadev/ulauncher-better-file-browser) | Support recursive search, file previews |
+| F2 | File Search (grep/glob) | `f`, `file` | ✅ COMPLETED | High | None | [mariob88/grep-search](https://github.com/mariob88/ulauncher-grep-search), [brpaz/file-search](https://github.com/brpaz/ulauncher-file-search), [fisadev/better-file-browser](https://github.com/fisadev/ulauncher-better-file-browser) | Support recursive search, file previews |
 | F3 | Empty Trash | `trash` | ✅ COMPLETED | Low | None | [EstebanForge/empty-trash](https://github.com/EstebanForge/ulauncher-empty-trash) | Added confirmation dialog |
 | F4 | YouTube Search | `yt` | ⏳ PENDING | Medium | None | [NastuzziSamy/youtube-search](https://github.com/NastuzziSamy/ulauncher-youtube-search) | Use YouTube Data API v3 |
 | F5 | Password Generator | `pass` | ✅ COMPLETED | Low | None | — | Configurable length/charset |
@@ -50,7 +50,7 @@ Note: Once you add a new feature or change any file, copy the file or whole root
 | F11 | DuckDuckGo Search | `ddg` | ⏳ PENDING | Low | None | [mikebarkmin/ulauncher-duckduckgo](https://github.com/mikebarkmin/ulauncher-duckduckgo) | Privacy-focused search |
 | F12 | Bing Search | `bing` | ⏳ PENDING | Low | None | — | Microsoft search engine |
 | F13 | AI Aggregator | `ai` | ⏳ PENDING | Medium | None | [IgorVaryvoda/perplexity](https://github.com/IgorVaryvoda/ulauncher-perplexity) | Links to: Perplexity, Gemini, ChatGPT, Claude, Copilot |
-| F14 | Calculator | `calc`, `=` | ⏳ PENDING | High | None | [tchar/albert-calculate-anything](https://github.com/tchar/ulauncher-albert-calculate-anything) | Support math expressions, currency, units |
+| F14 | Calculator | `calc`, `=` | ✅ COMPLETED | High | None | [tchar/albert-calculate-anything](https://github.com/tchar/ulauncher-albert-calculate-anything) | Support math expressions, currency, units |
 | F15 | IP Lookup | `ip` | ⏳ PENDING | Medium | None | [manahter/IP-Analysis](https://github.com/manahter/ulauncher-IP-Analysis), [munim/ip-lookup](https://github.com/munim/ulauncher-ip-lookup) | Local + public IP, IPv4/6, geolocation |
 | F16 | Browser Profiles | `bbp`, `cbp` | ⏳ PENDING | Medium | OS-specific paths | [SinghRobinKumar/brave-profiles](https://github.com/SinghRobinKumar/ulauncher-brave-profiles), [FloydJohn/chrome-profiles](https://github.com/FloydJohn/ulauncher-chrome-profiles) | Detect installed browsers, list profiles |
 | F17 | Word Dictionary | `w`, `ws`, `wa` | ⏳ PENDING | Low | API: dictionaryapi.dev | — | Definition/synonym/antonym via API |

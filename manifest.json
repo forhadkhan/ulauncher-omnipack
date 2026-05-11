@@ -70,6 +70,31 @@
       "type": "keyword",
       "name": "Google Search",
       "default_value": "g"
+    },
+    {
+      "id": "file_search_kw",
+      "type": "keyword",
+      "name": "File Search",
+      "default_value": "f"
+    },
+    {
+      "id": "file_search_path",
+      "type": "input",
+      "name": "File Search Path",
+      "description": "Default directory to search in (e.g. ~/Documents)",
+      "default_value": "~"
+    },
+    {
+      "id": "calc_kw",
+      "type": "keyword",
+      "name": "Calculator",
+      "default_value": "calc"
+    },
+    {
+      "id": "calc_alias_kw",
+      "type": "keyword",
+      "name": "Calculator Alias",
+      "default_value": "="
     }
   ]
 }

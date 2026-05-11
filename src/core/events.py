@@ -44,7 +44,10 @@ class KeywordQueryEventListener(EventListener):
                 "port": "killport_kw",
                 "ai": "ai_kw",
                 "g": "google_kw",
-                "trash": "emptytrash_kw"
+                "trash": "emptytrash_kw",
+                "file": "file_search_kw",
+                "calc": "calc_kw",
+                "=": "calc_alias_kw"
             }
             pref_id = pref_map.get(module_kw, f"{module_kw}_kw")
             
