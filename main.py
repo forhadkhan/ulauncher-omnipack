@@ -35,5 +35,6 @@ if __name__ == "__main__":
     extension.register_module(FileSearchModule)
     extension.register_module(CalculatorModule)
     extension.register_module(YouTubeModule)
+    extension.register_module(IpLookupModule)
     
     extension.run()
